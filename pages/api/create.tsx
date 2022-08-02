@@ -2,18 +2,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../lib/primsa";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { title, content } = req.body;
+  const { ISBN } = req.body;
+  console.log(ISBN);
 
   try {
-    await prisma.note.create({
+    await prisma.book.create({
       data: {
-        title,
-        content,
+        ISBN,
       },
     });
-    res.status(200).json({ message: "Note Created" });
+    res.status(200).json({ message: "Book Added" });
   } catch (error) {
-    console.log({ message: "Failure" });
+    console.log(error);
   }
 };
 

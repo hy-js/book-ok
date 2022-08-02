@@ -1,6 +1,7 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 // npx prisma studio
+// npx prisma migrate dev --name init
 
 generator client {
   provider = "prisma-client-js"
@@ -11,10 +12,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Note {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Book {
+  id    Int     @id @default(autoincrement())
+  OLkey String?
+
+  title         String?
+  author        String?
+  ISBN          String   @unique
+  pages         Int?
+  publishedYear String?
+  publisher     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

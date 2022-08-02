@@ -2,26 +2,36 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { prisma } from "../lib/primsa";
+import Image from "next/image";
 
-interface Notes {
-  notes: {
+interface Books {
+  books: {
+    OLkey: string;
     id: string;
     title: string;
     content: string;
+    author: string;
+    ISBN: string;
+    publishedYear: string;
+    publisher: string;
+    pages: string;
   }[];
 }
 
 interface FormData {
-  title: string;
-  content: string;
+  ISBN: string;
   id: string;
+  author: string;
+  title: string;
 }
 
-const Home = ({ notes }: Notes) => {
+const Home = ({ books }: Books) => {
+  const [showUpdate, setShowUpdate] = useState(false);
   const [form, setForm] = useState<FormData>({
-    title: "",
-    content: "",
+    ISBN: "",
     id: "",
+    author: "",
+    title: "",
   });
   const router = useRouter();
 
@@ -29,7 +39,7 @@ const Home = ({ notes }: Notes) => {
     router.replace(router.asPath);
   };
 
-  const createNote = async (data: FormData) => {
+  const createBook = async (data: FormData) => {
     try {
       fetch("http://localhost:3000/api/create", {
         body: JSON.stringify(data),
@@ -39,11 +49,12 @@ const Home = ({ notes }: Notes) => {
         method: "POST",
       }).then(() => {
         if (data.id) {
-          deleteNote(data.id);
-          setForm({ title: "", content: "", id: "" });
+          deleteBook(data.id);
+          setForm({ ISBN: "", id: "", author: "", title: "" });
           refreshData();
         } else {
-          setForm({ title: "", content: "", id: "" });
+          setForm({ ISBN: "", id: "", author: "", title: "" });
+          setShowUpdate(false);
           refreshData();
         }
       });
@@ -52,9 +63,9 @@ const Home = ({ notes }: Notes) => {
     }
   };
 
-  const deleteNote = async (id: string) => {
+  const deleteBook = async (id: string) => {
     try {
-      fetch(`http://localhost:3000/api/note/${id}`, {
+      fetch(`http://localhost:3000/api/book/${id}`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -65,9 +76,22 @@ const Home = ({ notes }: Notes) => {
     }
   };
 
+  const checkBook = async (id: string) => {
+    try {
+      fetch(`http://localhost:3000/api/check/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "GET",
+      }).then(() => refreshData());
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
   const handleSubmit = async (data: FormData) => {
     try {
-      createNote(data);
+      createBook(data);
     } catch (error) {
       console.log(error);
     }
@@ -75,55 +99,93 @@ const Home = ({ notes }: Notes) => {
 
   return (
     <div>
-      <h1 className="text-center font-bold text-2xl mt-4">Notes</h1>
+      <h1 className="text-center font-bold text-2xl mt-4">Books</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit(form);
         }}
-        className="w-auto min-w-[25%] max-w-min mx-auto space-y-6 flex flex-col items-stretch"
+        className="w-auto min-w-[50%] max-w-min mx-auto space-y-6 flex flex-col items-stretch"
       >
         <input
           type="text"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          placeholder="ISBN"
+          value={form.ISBN}
+          onChange={(e) => setForm({ ...form, ISBN: e.target.value })}
           className="border-2 rounded border-gray-600 p-1"
         />
-        <textarea
-          placeholder="Content"
-          value={form.content}
-          onChange={(e) => setForm({ ...form, content: e.target.value })}
-          className="border-2 rounded border-gray-600 p-1"
-        />
+        {/* <>
+          <input
+            type="text"
+            placeholder="title"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+            className="border-2 rounded border-gray-600 p-1"
+          />
+          <input
+            type="text"
+            placeholder="author"
+            value={form.author}
+            onChange={(e) => setForm({ ...form, author: e.target.value })}
+            className="border-2 rounded border-gray-600 p-1"
+          />
+        </> */}
         <button type="submit" className="bg-blue-500 text-white rounded p-1">
           Add +
         </button>
       </form>
 
-      <div className="w-auto min-w-[25%] max-w-min mt-20 mx-auto space-y-6 flex flex-col items-stretch">
+      <div className="w-auto min-w-[50%] max-w-min mt-20 mx-auto space-y-6 flex flex-col items-stretch">
         <ul>
-          {notes.map((note) => (
-            <li key={note.id} className="border-b border-gray-600 p-2">
+          {books.map((book) => (
+            <li key={book.id} className="border-b border-gray-600 p-2">
               <div className="flex justify-between">
                 <div className="flex-1">
-                  <h3 className="font-bold">{note.title}</h3>
-                  <p className="text-sm">{note.content}</p>
+                  <a
+                    href={`https://openlibrary.org${book.OLkey}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      alt={book.title || "book cover"}
+                      src={`https://covers.openlibrary.org/b/id/${
+                        book.OLkey.split("/")[2]
+                      }-M.jpg`}
+                      width={180}
+                      height={274}
+                    />
+
+                    <h2 className="font-bold">{book.title}</h2>
+                    <h3 className="font-bold">{book.ISBN}</h3>
+                    <h4>
+                      {book.publisher} - {book.publishedYear}
+                    </h4>
+                    <p>{book.pages} pp.</p>
+                  </a>
                 </div>
+
                 <button
-                  onClick={() =>
+                  className="bg-green-500 mr-3 px-3 text-white rounded"
+                  onClick={() => checkBook(book.id)}
+                >
+                  OL Lookup
+                </button>
+                <button
+                  onClick={() => {
+                    setShowUpdate(true);
                     setForm({
-                      title: note.title,
-                      content: note.content,
-                      id: note.id,
-                    })
-                  }
+                      ISBN: book.ISBN,
+                      id: book.id,
+                      author: book.author,
+                      title: book.title,
+                    });
+                  }}
                   className="bg-blue-500 mr-3 px-3 text-white rounded"
                 >
                   Update
                 </button>
                 <button
-                  onClick={() => deleteNote(note.id)}
+                  onClick={() => deleteBook(book.id)}
                   className="bg-red-500 px-3 text-white rounded"
                 >
                   X
@@ -140,17 +202,21 @@ const Home = ({ notes }: Notes) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const notes = await prisma.note.findMany({
+  const books = await prisma.book.findMany({
     select: {
-      title: true,
+      ISBN: true,
+      OLkey: true,
       id: true,
-      content: true,
+      title: true,
+      pages: true,
+      publishedYear: true,
+      publisher: true,
     },
   });
 
   return {
     props: {
-      notes,
+      books,
     },
   };
 };

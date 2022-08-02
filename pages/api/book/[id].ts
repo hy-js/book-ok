@@ -2,15 +2,15 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/primsa";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const noteId = req.query.id;
+  const bookId = req.query.id;
 
   if (req.method === "DELETE") {
-    const note = await prisma.note.delete({
-      where: { id: Number(noteId) },
+    const book = await prisma.book.delete({
+      where: { id: Number(bookId) },
     });
-    res.json(note);
+    res.json(book);
   } else {
-    console.log("Note could not be created");
+    console.log("Book could not be created");
   }
 };
 
