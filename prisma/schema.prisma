@@ -14,14 +14,16 @@ datasource db {
 
 model Book {
   id    Int     @id @default(autoincrement())
+  ISBN  String  @unique
   OLkey String?
 
-  title         String?
-  author        String?
-  ISBN          String   @unique
+  title  String?
+  author String?
+
+  cover         Int?
   pages         Int?
-  publishedYear String?
-  publisher     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  publishedYear Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

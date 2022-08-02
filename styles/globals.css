@@ -1,3 +1,89 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    @font-face {
+        font-family: "Press Start 2P";
+        src: url("/fonts/PressStart2P-Regular.ttf");
+    }
+}
+
+/* GLOBAL STYLES */
+*,
+*:after,
+*:before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* TYPOGRAPHY */
+
+h1 {
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  margin: 0;
+  font-size: 4rem;
+  color: black;
+}
+
+h2 {
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  margin: 0;
+  font-size: 2rem;
+  text-overflow: "...";
+}
+
+h3 {
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  margin: 0;
+  font-size: 1.5rem;
+}
+h4 {
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  margin: 0;
+  line-height: 1.5rem;
+  font-size: 0.8rem;
+}
+
+h5 {
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  margin: 0;
+  line-height: 1.5rem;
+  font-size: 0.6rem;
+}
+
+a {
+  color: #415a77;
+  text-decoration: none;
+  font-family: Arial;
+  font-family: "Press Start 2P", cursive;
+  display: inline;
+  font-size: 1.5rem;
+}
+
+ul {
+  list-style-type: none;
+}
+
+/* LAYOUT */
+body {
+  background-color: #efefef;
+}
+
+/* Items */
+input {
+  background-color: #e0e1dd;
+  display: inline-block;
+  padding: 20px 15px;
+  font-size: 16px;
+  border-radius: 0;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  font-family: "Press Start 2P", cursive;
+}
