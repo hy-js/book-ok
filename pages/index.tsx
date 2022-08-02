@@ -83,7 +83,7 @@ const Home = ({ books }: Books) => {
           "Content-Type": "application/json",
         },
         method: "GET",
-      }).then(() => refreshData());
+      });
     } catch (error) {
       console.log("error");
     }
@@ -105,13 +105,13 @@ const Home = ({ books }: Books) => {
           e.preventDefault();
           handleSubmit(form);
         }}
-        className="w-auto min-w-[50%] max-w-min mx-auto space-y-6 flex flex-col items-stretch"
+        className="w-auto min-w-[75%] max-w-min mx-auto space-y-6 flex flex-col items-stretch"
       >
         <input
           type="text"
           placeholder="ISBN"
           value={form.ISBN}
-          onChange={(e) => setForm({ ...form, ISBN: e.target.value })}
+          onChange={(e) => setForm({ ...form, ISBN: e.target.value.trim() })}
           className="border-2 rounded border-gray-600 p-1"
         />
         {/* <>
@@ -135,64 +135,67 @@ const Home = ({ books }: Books) => {
         </button>
       </form>
 
-      <div className="w-auto min-w-[50%] max-w-min mt-20 mx-auto space-y-6 flex flex-col items-stretch">
+      <div className="w-auto min-w-[75%] max-w-min mt-20 mx-auto space-y-6 flex flex-col items-stretch">
         <ul>
-          {books.map((book) => (
-            <li key={book.id} className="border-b border-gray-600 p-2">
-              <div className="flex justify-between">
-                <div className="flex-1">
-                  <a
-                    href={`https://openlibrary.org${book.OLkey}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <img
+          {books
+            .slice(0)
+            .reverse()
+            .map((book) => (
+              <li key={book.id} className="border-b border-gray-600 p-2">
+                <div className="flex justify-between">
+                  <div className="flex-1">
+                    <a
+                      href={`https://openlibrary.org${book.OLkey}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {/* <img
                       alt={book.title || "book cover"}
                       src={`https://covers.openlibrary.org/b/id/${
                         book.OLkey.split("/")[2]
                       }-M.jpg`}
                       width={180}
                       height={274}
-                    />
+                    /> */}
 
-                    <h2 className="font-bold">{book.title}</h2>
-                    <h3 className="font-bold">{book.ISBN}</h3>
-                    <h4>
-                      {book.publisher} - {book.publishedYear}
-                    </h4>
-                    <p>{book.pages} pp.</p>
-                  </a>
-                </div>
+                      <h2 className="font-bold">{book.title}</h2>
+                      <h3 className="font-bold">{book.ISBN}</h3>
+                      <h4>
+                        {book.publisher} - {book.publishedYear}
+                      </h4>
+                      {book.pages && <p>{book.pages} pp.</p>}
+                    </a>
+                  </div>
 
-                <button
+                  {/* <button
                   className="bg-green-500 mr-3 px-3 text-white rounded"
                   onClick={() => checkBook(book.id)}
                 >
                   OL Lookup
-                </button>
-                <button
-                  onClick={() => {
-                    setShowUpdate(true);
-                    setForm({
-                      ISBN: book.ISBN,
-                      id: book.id,
-                      author: book.author,
-                      title: book.title,
-                    });
-                  }}
-                  className="bg-blue-500 mr-3 px-3 text-white rounded"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => deleteBook(book.id)}
-                  className="bg-red-500 px-3 text-white rounded"
-                >
-                  X
-                </button>
-              </div>
-            </li>
-          ))}
+                </button> */}
+                  <button
+                    onClick={() => {
+                      setShowUpdate(true);
+                      setForm({
+                        ISBN: book.ISBN,
+                        id: book.id,
+                        author: book.author,
+                        title: book.title,
+                      });
+                    }}
+                    className="bg-blue-500 mr-3 px-3 text-white rounded"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => deleteBook(book.id)}
+                    className="bg-red-500 px-3 text-white rounded"
+                  >
+                    X
+                  </button>
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
     </div>
