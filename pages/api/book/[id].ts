@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     res.json(book);
   } else {
-    console.log("Book could not be created");
+    console.log("Book could not be deleted");
   }
 };
 

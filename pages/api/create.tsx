@@ -3,8 +3,8 @@ import { prisma } from "../../lib/primsa";
 import axios from "axios";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { query } = req.body;
-  console.log(query);
+  const { query, status } = req.body;
+  console.log(query, status);
   try {
     const response = await axios.get(
       `http://openlibrary.org/search.json?q=${query}`
@@ -12,13 +12,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     let {
       data: { docs },
     } = response;
-    // console.log(docs[0].author_name[0]);
+    console.log(docs);
 
     try {
       await prisma.book.create({
         data: {
           ISBN: docs[0].isbn[0],
           OLkey: docs[0].key,
+          status: status,
 
           title: docs[0].title,
           author: docs[0].author_name[0],

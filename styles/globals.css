@@ -87,3 +87,19 @@ input {
   border: 1px solid transparent;
   font-family: "Press Start 2P", cursive;
 }
+
+.READ {
+  background-color: #F87171;
+}
+
+.READING {
+  background-color: #FB923C;
+}
+
+.TBR {
+  background-color: #FACC15;
+}
+
+.DNF {
+  background-color: #A78BFA;
+}

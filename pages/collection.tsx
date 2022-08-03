@@ -27,17 +27,13 @@ interface FormData {
 }
 
 const Home = ({ books }: Books) => {
+  const [view, setView] = useState(true);
   const [form, setForm] = useState<FormData>({
     id: "",
     query: "",
     status: "",
   });
   const router = useRouter();
-
-  const TBR = books.filter((book) => book.status === "TBR");
-  const READ = books.filter((book) => book.status === "READ");
-  const READING = books.filter((book) => book.status === "READING");
-  const DNF = books.filter((book) => book.status === "DNF");
 
   const refreshData = () => {
     router.replace(router.asPath);
@@ -100,6 +96,11 @@ const Home = ({ books }: Books) => {
     }
   };
 
+  const TBR = books.filter((book) => book.status === "TBR");
+  const READ = books.filter((book) => book.status === "READ");
+  const READING = books.filter((book) => book.status === "READING");
+  const DNF = books.filter((book) => book.status === "DNF");
+
   return (
     <div className="min-w-[80%] w-auto  max-w-min mx-auto space-y-6 ">
       <h1 className="font-bold mt-4">Book OK</h1>
@@ -145,10 +146,77 @@ const Home = ({ books }: Books) => {
       </form>
 
       <div className="flex flex-col items-stretch">
-        <>
-          <h2 className="READING">{READING.length} READING</h2>
-          <ul className="flex  flex-wrap border-b border-gray-600 p-2 ">
-            {READING.map((book) => (
+        <h2>My Collection</h2>
+        <button
+          className="bg-slate-800 text-white rounded p-1"
+          onClick={() => setView(!view)}
+        >
+          View =
+        </button>
+        {view ? (
+          <>
+            <ul className="flex flex-col-reverse mx-auto">
+              {books.map((book) => (
+                <li key={book.id} className="border-b border-gray-600 p-2">
+                  <div className="flex justify-between">
+                    <div className="flex">
+                      <a
+                        href={`https://openlibrary.org${book.OLkey}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {book.cover ? (
+                          <>
+                            <img
+                              alt={book.title || "book cover"}
+                              src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                              className="w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
+                              <h4>{book.title}</h4>
+                              <h5>{book.author}</h5>
+                            </div>
+                          </>
+                        )}
+                      </a>
+                      <div className="flex-col p-3">
+                        <h3 className={book.status}>{book.status}</h3>
+                        <h5>{book.publishedYear}</h5>
+                        <h2 className="font-bold">{book.title}</h2>
+                        <h3 className="font-bold">{book.author}</h3>
+                        <h4>{book.ISBN}</h4>
+                        {book.pages && <h5>{book.pages} pp.</h5>}
+                        <button
+                          onClick={() => {
+                            setForm({
+                              id: book.id,
+                              query: book.ISBN,
+                              status: book.status,
+                            });
+                          }}
+                          className="bg-blue-500 mr-3 px-3 text-white rounded"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={() => deleteBook(book.id)}
+                          className="bg-red-500 px-3 text-white rounded"
+                        >
+                          X
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <ul className="flex flex-wrap mx-auto">
+            {books.map((book) => (
               <li key={book.id} className="p-2">
                 {book.cover ? (
                   <Image
@@ -168,73 +236,7 @@ const Home = ({ books }: Books) => {
               </li>
             ))}
           </ul>
-          <h2 className="TBR">{TBR.length} TBR</h2>
-          <ul className="flex  flex-wrap border-b border-gray-600 p-2 ">
-            {TBR.map((book) => (
-              <li key={book.id} className="p-2">
-                {book.cover ? (
-                  <Image
-                    placeholder="empty"
-                    alt={book.title || "book cover"}
-                    width={180}
-                    height={274}
-                    src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                    className="w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
-                  />
-                ) : (
-                  <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
-                    <h4>{book.title}</h4>
-                    <h5>{book.author}</h5>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-          <h2 className="READ">{READ.length} READ</h2>
-          <ul className="flex  flex-wrap border-b border-gray-600 p-2">
-            {READ.map((book) => (
-              <li key={book.id} className="p-2">
-                {book.cover ? (
-                  <Image
-                    placeholder="empty"
-                    alt={book.title || "book cover"}
-                    width={180}
-                    height={274}
-                    src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                    className="w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
-                  />
-                ) : (
-                  <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
-                    <h4>{book.title}</h4>
-                    <h5>{book.author}</h5>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-          <h2 className="DNF">{DNF.length} DNF</h2>
-          <ul className="flex  flex-wrap border-b border-gray-600 p-2">
-            {DNF.map((book) => (
-              <li key={book.id} className="p-2">
-                {book.cover ? (
-                  <Image
-                    placeholder="empty"
-                    alt={book.title || "book cover"}
-                    width={180}
-                    height={274}
-                    src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                    className="w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
-                  />
-                ) : (
-                  <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
-                    <h4>{book.title}</h4>
-                    <h5>{book.author}</h5>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
-        </>
+        )}
       </div>
     </div>
   );
@@ -243,7 +245,7 @@ const Home = ({ books }: Books) => {
 export default Home;
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const myBooks = await prisma.book.findMany({
+  const books = await prisma.book.findMany({
     select: {
       id: true,
       ISBN: true,
@@ -258,8 +260,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
       publishedYear: true,
     },
   });
-  // Limit to 100 books at a time
-  const books = myBooks.slice(0, 101);
 
   return {
     props: {
