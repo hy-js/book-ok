@@ -28,7 +28,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           OLkey: data.key,
           title: data.title,
           publishedYear: data.publish_date,
-          publisher: data.publishers[0],
           pages: data.number_of_pages,
         },
       });

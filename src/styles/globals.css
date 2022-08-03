@@ -24,7 +24,7 @@ h1 {
   font-family: Arial;
   font-family: "Press Start 2P", cursive;
   margin: 0;
-  font-size: 4rem;
+  font-size: 5rem;
   color: black;
 }
 
@@ -59,12 +59,11 @@ h5 {
 }
 
 a {
-  color: #415a77;
   text-decoration: none;
   font-family: Arial;
   font-family: "Press Start 2P", cursive;
   display: inline;
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 ul {
@@ -77,14 +76,13 @@ body {
 }
 
 /* Items */
-input {
+input, select {
   background-color: #e0e1dd;
   display: inline-block;
   padding: 20px 15px;
-  font-size: 16px;
+  font-size: 1.5rem;
   border-radius: 0;
   -webkit-appearance: none;
-  border: 1px solid transparent;
   font-family: "Press Start 2P", cursive;
 }
 

@@ -10,7 +10,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     res.json(book);
   } else {
-    console.log("Book could not be deleted");
+    const details = await prisma.book.findUnique({
+      where: {
+        id: Number(bookId)
+      }
+    })
+    res.status(200).json(details);
   }
 };
 
