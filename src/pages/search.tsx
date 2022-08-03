@@ -57,7 +57,7 @@ const Search = () => {
   }
 
   return (
-    <>
+    <main className="mb-auto h-1">
       <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6'>
         <Header />
         <div className='flex flex-col items-stretch h-full'>
@@ -72,7 +72,7 @@ const Search = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {loading && <h3>Loading...</h3>}
+            {loading && <h3>Loading<span className="animate:pulse">...</span></h3>}
             <ul className='flex flex-col'>
               {books.map((book) => (
                 <li key={book.key} className='border-b border-gray-600 p-2'>
@@ -127,7 +127,7 @@ const Search = () => {
         </div>
       </div>
       <Footer />
-    </>
+    </main>
   )
 }
 

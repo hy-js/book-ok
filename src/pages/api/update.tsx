@@ -1,14 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { prisma } from "../../lib/primsa"
-import axios from "axios"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id, status, ISBN, title, author, pages, publishedYear } =
-    req.body
+  const {
+    id: bookId,
+    status,
+    ISBN,
+    title,
+    author,
+    pages,
+    publishedYear
+  } = req.body
+  console.log(status)
   try {
     const updateBook = await prisma.book.update({
       where: {
-        id: id
+        id: bookId
       },
       data: {
         status,

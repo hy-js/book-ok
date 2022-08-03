@@ -106,7 +106,7 @@ const Collection = ({ books }: Books) => {
   const DNF = books.filter((book) => book.status === "DNF")
 
   return (
-    <>
+    <main className="mb-auto h-1">
       <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6 '>
         <Header />
         <div className='flex flex-col items-stretch h-full'>
@@ -167,7 +167,7 @@ const Collection = ({ books }: Books) => {
                             <button
                               onClick={() => deleteBook(book.id)}
                               className='bg-red-500 px-3 text-white rounded'>
-                              <h5>X</h5>
+                              <h5>Delete</h5>
                             </button>
                           </div>
                         </div>
@@ -205,7 +205,7 @@ const Collection = ({ books }: Books) => {
         </div>
       </div>
       <Footer />
-    </>
+    </main>
   )
 }
 

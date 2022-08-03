@@ -45,10 +45,6 @@ const Details = () => {
     publishedYear: ""
   })
 
-  const refreshData = () => {
-    router.replace(router.asPath)
-  }
-
   const updateBook = async (data: FormData) => {
     try {
       fetch("http://localhost:3000/api/update", {
@@ -57,9 +53,7 @@ const Details = () => {
           "Content-Type": "application/json"
         },
         method: "POST"
-      }).then(() => {
-        refreshData()
-      })
+      }).then(() => {})
     } catch (error) {
       console.log(error)
     }
@@ -85,6 +79,19 @@ const Details = () => {
   }, [])
   console.log(details)
 
+  const deleteBook = async (BookId: string) => {
+    try {
+      fetch(`http://localhost:3000/api/book/${BookId}`, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+        method: "DELETE"
+      }).then(() => router.push("/collection"))
+    } catch (error) {
+      console.log("error")
+    }
+  }
+
   return (
     <>
       <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6 '>
@@ -107,9 +114,6 @@ const Details = () => {
                       width={360}
                       height={548}
                     />
-                    <h2>{details?.title}</h2>
-                    <h3>{details?.author}</h3>
-                    <h3>{details?.publishedYear}</h3>
                   </>
                 ) : (
                   <>
@@ -122,11 +126,12 @@ const Details = () => {
                   </>
                 )}
               </a>
-              <h4>
-                ISBN {details?.ISBN.length}: {details?.ISBN}
-              </h4>
-              <h4>Pages: {details?.pages}</h4>
               <h4>Last Updated: {details?.updatedAt.slice(0, 10)}</h4>
+              <button
+                onClick={() => deleteBook(details?.id)}
+                className='bg-red-500 px-3 text-white rounded'>
+                <h5>Delete Book</h5>
+              </button>
             </div>
           </div>
           <form
@@ -138,6 +143,7 @@ const Details = () => {
             <select
               name='status'
               id='status'
+              placeholder={details?.status}
               value={form.status}
               onChange={(e) =>
                 setForm({
@@ -152,8 +158,14 @@ const Details = () => {
               <option value='DNF'>DNF</option>
             </select>
             <input
+              className='hidden'
               type='search'
-              placeholder='ISBN'
+              placeholder='Id'
+              value={details?.id}
+            />
+            <input
+              type='search'
+              placeholder={details?.ISBN}
               value={form.ISBN}
               onChange={(e) =>
                 setForm({
@@ -164,7 +176,7 @@ const Details = () => {
             />
             <input
               type='search'
-              placeholder='Title'
+              placeholder={details?.title}
               value={form.title}
               onChange={(e) =>
                 setForm({
@@ -175,7 +187,7 @@ const Details = () => {
             />
             <input
               type='search'
-              placeholder='Author'
+              placeholder={details?.author}
               value={form.author}
               onChange={(e) =>
                 setForm({
@@ -186,7 +198,7 @@ const Details = () => {
             />
             <input
               type='search'
-              placeholder='Published Year'
+              placeholder={details?.publishedYear}
               value={form.publishedYear}
               onChange={(e) =>
                 setForm({
@@ -197,7 +209,7 @@ const Details = () => {
             />
             <input
               type='search'
-              placeholder='Pages'
+              placeholder={details?.pages}
               value={form.pages}
               onChange={(e) =>
                 setForm({
@@ -206,6 +218,9 @@ const Details = () => {
                 })
               }
             />
+            <button type='submit' className='bg-blue-300'>
+              <h3>Submit</h3>
+            </button>
           </form>
         </div>
       </div>

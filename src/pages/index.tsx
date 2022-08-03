@@ -7,6 +7,7 @@ import Link from "next/link"
 
 import Header from "../components/Header"
 import Footer from "../components/Footer"
+import { Http2ServerRequest } from "http2"
 
 interface Books {
   books: {
@@ -37,11 +38,14 @@ const Home = ({ books }: Books) => {
     status: ""
   })
   const router = useRouter()
+  const [open, setOpen] = useState(false)
 
   const TBR = books.filter((book) => book.status === "TBR")
   const READ = books.filter((book) => book.status === "READ")
   const READING = books.filter((book) => book.status === "READING")
-  const DNF = books.filter((book) => book.status === "DNF")
+  const DNF = books.filter(
+    (book) => book.status === "DNF" || book.status === null
+  )
 
   const refreshData = () => {
     router.replace(router.asPath)
@@ -105,147 +109,152 @@ const Home = ({ books }: Books) => {
   }
 
   return (
-    <>
-      <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6 '>
-        <Header />
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit(form)
-          }}
-          className='flex flex-col items-stretch'>
-          <select
-            name='status'
-            id='status'
-            value={form.status}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                status: e.target.value
-              })
-            }>
-            <option value='-'>Select Shelf</option>
-            <option value='TBR'>TBR</option>
-            <option value='READING'>Reading</option>
-            <option value='READ'>Read</option>
-            <option value='DNF'>DNF</option>
-          </select>
-          <input
-            type='search'
-            placeholder='Title and Author or ISBN'
-            value={form.query}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                query: e.target.value.replaceAll(" ", "+")
-              })
-            }
-          />
-        </form>
+    <div className='flex flex-col h-screen justify-between'>
+      <Header />
+      <main className='mb-auto h-1'>
+        <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6 '>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSubmit(form)
+            }}
+            className='flex flex-col items-stretch'>
+            <select
+              name='status'
+              id='status'
+              value={form.status}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  status: e.target.value
+                })
+              }>
+              <option value='-'>Select Shelf</option>
+              <option value='TBR'>TBR</option>
+              <option value='READING'>Reading</option>
+              <option value='READ'>Read</option>
+              <option value='DNF'>DNF</option>
+            </select>
+            <input
+              type='search'
+              placeholder='Title and Author or ISBN'
+              value={form.query}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  query: e.target.value.replaceAll(" ", "+")
+                })
+              }
+            />
+          </form>
 
-        <div className='flex flex-col items-stretch'>
-          <>
-            <h2 className='READING capitalise'>{READING.length} Reading</h2>
-            <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
-              {READING.map((book) => (
-                <li key={book.id} className='p-2'>
-                  <Link href={`/details/${book.id}`}>
-                    {book.cover ? (
-                      <Image
-                        placeholder='empty'
-                        alt={book.title || "book cover"}
-                        width={180}
-                        height={274}
-                        src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                        className='border-gray-500 border-solid border-2'
-                      />
-                    ) : (
-                      <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
-                        <h4>{book.title}</h4>
-                        <h5>{book.author}</h5>
-                      </div>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <h2 className='TBR capitalise'>{TBR.length} TBR</h2>
-            <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
-              {TBR.map((book) => (
-                <li key={book.id} className='p-2'>
-                  <Link href={`/details/${book.id}`}>
-                    {book.cover ? (
-                      <Image
-                        placeholder='empty'
-                        alt={book.title || "book cover"}
-                        width={180}
-                        height={274}
-                        src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                        className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
-                      />
-                    ) : (
-                      <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
-                        <h4>{book.title}</h4>
-                        <h5>{book.author}</h5>
-                      </div>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <h2 className='READ capitalize'>{READ.length} Read</h2>
-            <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
-              {READ.map((book) => (
-                <li key={book.id} className='p-2'>
-                  <Link href={`/details/${book.id}`}>
-                    {book.cover ? (
-                      <Image
-                        placeholder='empty'
-                        alt={book.title || "book cover"}
-                        width={180}
-                        height={274}
-                        src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                        className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
-                      />
-                    ) : (
-                      <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
-                        <h4>{book.title}</h4>
-                        <h5>{book.author}</h5>
-                      </div>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <h2 className='DNF capitalize'>{DNF.length} DNF</h2>
-            <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
-              {DNF.map((book) => (
-                <li key={book.id} className='p-2'>
-                  <Link href={`/details/${book.id}`}>
-                    {book.cover ? (
-                      <Image
-                        placeholder='empty'
-                        alt={book.title || "book cover"}
-                        width={180}
-                        height={274}
-                        src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                        className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
-                      />
-                    ) : (
-                      <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
-                        <h4>{book.title}</h4>
-                        <h5>{book.author}</h5>
-                      </div>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
+          <div className='flex flex-col items-stretch'>
+            <>
+              <h2 className='READING capitalise'>{READING.length} Reading</h2>
+              <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
+                {READING.map((book) => (
+                  <li key={book.id} className='p-2'>
+                    <Link href={`/details/${book.id}`}>
+                      {book.cover ? (
+                        <>
+                          <Image
+                            placeholder='empty'
+                            alt={book.title || "book cover"}
+                            width={180}
+                            height={274}
+                            src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                            className='border-gray-500 border-solid border-2'
+                          />
+                        </>
+                      ) : (
+                        <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
+                          <h4>{book.title}</h4>
+                          <h5>{book.author}</h5>
+                        </div>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <h2 className='TBR capitalise'>{TBR.length} TBR</h2>
+              <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
+                {TBR.map((book) => (
+                  <li key={book.id} className='p-2'>
+                    <Link href={`/details/${book.id}`}>
+                      {book.cover ? (
+                        <Image
+                          placeholder='empty'
+                          alt={book.title || "book cover"}
+                          width={180}
+                          height={274}
+                          src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                          className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
+                        />
+                      ) : (
+                        <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
+                          <h4>{book.title}</h4>
+                          <h5>{book.author}</h5>
+                        </div>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <h2 className='READ capitalize'>{READ.length} Read</h2>
+              <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
+                {READ.map((book) => (
+                  <li key={book.id} className='p-2'>
+                    <Link href={`/details/${book.id}`}>
+                      {book.cover ? (
+                        <Image
+                          placeholder='empty'
+                          alt={book.title || "book cover"}
+                          width={180}
+                          height={274}
+                          src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                          className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
+                        />
+                      ) : (
+                        <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
+                          <h4>{book.title}</h4>
+                          <h5>{book.author}</h5>
+                        </div>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <h2 className='DNF capitalize'>{DNF.length} Unsorted/DNF</h2>
+              <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
+                {DNF.map((book) => (
+                  <li key={book.id} className='p-2'>
+                    <Link href={`/details/${book.id}`}>
+                      {book.cover ? (
+                        <Image
+                          placeholder='empty'
+                          alt={book.title || "book cover"}
+                          width={180}
+                          height={274}
+                          src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                          className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
+                        />
+                      ) : (
+                        <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
+                          <h4>{book.title}</h4>
+                          <h5>{book.author}</h5>
+                        </div>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <h2 className='capitalize'>{books.length} Total</h2>
+            </>
+          </div>
         </div>
-      </div>
-      <Footer />
-    </>
+        <Footer />
+      </main>
+    </div>
   )
 }
 
