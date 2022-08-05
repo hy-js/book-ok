@@ -41,7 +41,7 @@ const Upload = () => {
       <h4 className='page-header mb-4'>Upload a CSV</h4>
       <div className='mb-4'>
         <input
-          ref={inputRef}
+          // ref={inputRef}
           disabled={uploading}
           type='file'
           accept='.csv'

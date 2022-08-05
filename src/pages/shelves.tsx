@@ -1,13 +1,13 @@
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { prisma } from "../lib/primsa";
 import Link from "next/link";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Http2ServerRequest } from "http2";
+import axios from "axios";
 
 interface Books {
   books: {
@@ -32,13 +32,36 @@ interface FormData {
 }
 
 const Shelves = ({ books }: Books) => {
+  const [data, setData] = useState<Books>([]);
+  const [error, setError] = useState(false);
+  const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FormData>({
     id: "",
     query: "",
     status: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrormessage] = useState(false);
+
+  useEffect(() => {
+    // search the api
+
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const results = await axios.get("http://localhost:3000/api/books");
+        console.log(results);
+        // setData(results);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   const router = useRouter();
-  const [open, setOpen] = useState(false);
 
   const TBR = books.filter((book) => book.status === "TBR");
   const READ = books.filter((book) => book.status === "READ");
@@ -71,6 +94,9 @@ const Shelves = ({ books }: Books) => {
       });
     } catch (error) {
       console.log(error);
+      setForm({ query: "", id: "", status: "" });
+      setErrormessage(true);
+      refreshData();
     }
   };
 
@@ -149,6 +175,7 @@ const Shelves = ({ books }: Books) => {
               }
             />
           </form>
+          {errorMessage && <p>No book found</p>}
           <div className="flex flex-col items-stretch">
             <>
               <h2 className="READING capitalise">{READING.length} Reading</h2>
@@ -180,25 +207,27 @@ const Shelves = ({ books }: Books) => {
               <h2 className="TBR capitalise">{TBR.length} TBR</h2>
               <ul className="flex  flex-wrap border-b border-gray-600 p-2 ">
                 {TBR.map((book) => (
-                  <li key={book.id} className="p-2 cursor-pointer">
-                    <Link href={`/details/${book.id}`}>
-                      {book.cover ? (
-                        <Image
-                          placeholder="empty"
-                          alt={book.title || "book cover"}
-                          width={180}
-                          height={274}
-                          src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                          className="w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
-                        />
-                      ) : (
-                        <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
-                          <h4>{book.title}</h4>
-                          <h5>{book.author}</h5>
-                        </div>
-                      )}
-                    </Link>
-                  </li>
+                  <Link href={`/details/${book.id}`}>
+                    <li key={book.id} className="p-2">
+                      <Link href={`/details/${book.id}`}>
+                        {book.cover ? (
+                          <Image
+                            placeholder="empty"
+                            alt={book.title || "book cover"}
+                            width={180}
+                            height={274}
+                            src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                            className="cursor-pointer w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2"
+                          />
+                        ) : (
+                          <div className="cursor-pointer w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400">
+                            <h4>{book.title}</h4>
+                            <h5>{book.author}</h5>
+                          </div>
+                        )}
+                      </Link>
+                    </li>
+                  </Link>
                 ))}
               </ul>
               <h2 className="READ capitalize">{READ.length} Read</h2>
