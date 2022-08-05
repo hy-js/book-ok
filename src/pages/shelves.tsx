@@ -1,13 +1,12 @@
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { prisma } from "../lib/primsa";
 import Link from "next/link";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import axios from "axios";
 
 interface Books {
   books: {
@@ -32,36 +31,13 @@ interface FormData {
 }
 
 const Shelves = ({ books }: Books) => {
-  const [data, setData] = useState<Books>([]);
-  const [error, setError] = useState(false);
-  const [open, setOpen] = useState(false);
   const [form, setForm] = useState<FormData>({
     id: "",
     query: "",
     status: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrormessage] = useState(false);
-
-  useEffect(() => {
-    // search the api
-
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const results = await axios.get("http://localhost:3000/api/books");
-        console.log(results);
-        // setData(results);
-        setLoading(false);
-      } catch (error) {
-        setError(error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
   const router = useRouter();
+  const [open, setOpen] = useState(false);
 
   const TBR = books.filter((book) => book.status === "TBR");
   const READ = books.filter((book) => book.status === "READ");
@@ -94,9 +70,7 @@ const Shelves = ({ books }: Books) => {
       });
     } catch (error) {
       console.log(error);
-      setForm({ query: "", id: "", status: "" });
-      setErrormessage(true);
-      refreshData();
+      return <p>Error</p>;
     }
   };
 
@@ -110,6 +84,7 @@ const Shelves = ({ books }: Books) => {
       }).then(() => refreshData());
     } catch (error) {
       console.log("error");
+      return <p>Error</p>;
     }
   };
 
@@ -123,6 +98,7 @@ const Shelves = ({ books }: Books) => {
       });
     } catch (error) {
       console.log("error");
+      return <p>Error</p>;
     }
   };
 
@@ -131,6 +107,7 @@ const Shelves = ({ books }: Books) => {
       createBook(data);
     } catch (error) {
       console.log(error);
+      return <p>Error</p>;
     }
   };
 
@@ -175,14 +152,13 @@ const Shelves = ({ books }: Books) => {
               }
             />
           </form>
-          {errorMessage && <p>No book found</p>}
           <div className="flex flex-col items-stretch">
             <>
               <h2 className="READING capitalise">{READING.length} Reading</h2>
               <ul className="flex  flex-wrap border-b border-gray-600 p-2 ">
                 {READING.map((book) => (
-                  <li key={book.id} className="p-2">
-                    <Link href={`/details/${book.id}`}>
+                  <Link href={`/details/${book.id}`}>
+                    <li key={book.id} className="p-2">
                       {book.cover ? (
                         <>
                           <Image
@@ -200,8 +176,8 @@ const Shelves = ({ books }: Books) => {
                           <h5>{book.author}</h5>
                         </div>
                       )}
-                    </Link>
-                  </li>
+                    </li>
+                  </Link>
                 ))}
               </ul>
               <h2 className="TBR capitalise">{TBR.length} TBR</h2>

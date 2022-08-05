@@ -3,12 +3,8 @@ import { prisma } from "../../lib/primsa";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    let allBooks = await prisma.book.findMany({
-      orderBy: {
-        updatedAt: "desc",
-      },
-    });
-    res.status(200).json(allBooks);
+    const profile = await prisma.profile.findFirst();
+    res.status(200).json(profile);
   } catch (error) {
     console.log(error);
   }

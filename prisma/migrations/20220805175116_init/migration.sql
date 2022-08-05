@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Book" ADD COLUMN     "favourite" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "owned" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN     "want" BOOLEAN NOT NULL DEFAULT false;

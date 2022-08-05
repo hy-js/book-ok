@@ -4,13 +4,12 @@
 // npx prisma migrate dev --name init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
-
 }
 
 datasource db {
-  provider = "postgresql"
+  provider             = "postgresql"
   url                  = env("DATABASE_URL")
   shadowDatabaseUrl    = env("SHADOW_URL")
   referentialIntegrity = "prisma"
@@ -29,13 +28,24 @@ model Book {
   pages         Int?
   publishedYear Int?
 
+  owned     Boolean @default(false)
+  want      Boolean @default(false)
+  favourite Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Profile   Profile? @relation(fields: [profileId], references: [id])
+  profileId Int?
+}
+
+model Profile {
+  id       Int    @id @default(autoincrement())
+  username String
+
+  readingGoal        Int
+  readingGoalUpdated DateTime? @default(now())
+  books              Book[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
-// enum Status {
-//   TBR
-//   READ
-//   READING
-//   DNF
-// }
