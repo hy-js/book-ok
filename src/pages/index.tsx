@@ -37,6 +37,7 @@ const Home = ({
   profile,
   totalPages,
   favs,
+  decades,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <main className="mb-auto h-1">
@@ -101,7 +102,9 @@ const Home = ({
               <li className="p-2">
                 <div className="w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-green-400 flex flex-col text-center justify-center">
                   <h4>Favourite Decade</h4>
-                  <h5>TODO</h5>
+                  {decades.map((year) => (
+                    <h5>{year}</h5>
+                  ))}
                 </div>
               </li>
               <li className="p-2">
@@ -174,8 +177,11 @@ export const getStaticProps = async () => {
 
   // STATS
   const readThisYear = books.filter((book) => book.status === "READ");
-  const authors = books.filter((book) => book.author);
-  console.log(authors);
+  let decades = readThisYear.map(function (item: Books) {
+    return item["publishedYear"];
+  });
+  decades = decades.sort();
+
   // Pages
   var totalPages = readThisYear.reduce(
     (accum, item) => (item.pages !== null ? accum + item.pages : accum + 0),
@@ -192,6 +198,7 @@ export const getStaticProps = async () => {
       profile,
       totalPages,
       favs,
+      decades,
     },
   };
 };
