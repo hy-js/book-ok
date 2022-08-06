@@ -5,12 +5,12 @@ import Footer from "../components/Footer";
 
 const Roadmap = () => {
   return (
-    <div className="flex flex-col h-screen justify-between">
-      <main className="mb-auto h-10">
-        <div className="min-w-[80%] w-auto  max-w-min mx-auto space-y-6 ">
+    <div className='flex flex-col h-screen justify-between'>
+      <main className='mb-auto h-10'>
+        <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
           <Header />
-          <div className="flex flex-col items-stretch h-full justify-center">
-            <h2 className="READING capitalize">Roadmap</h2>
+          <div className='flex flex-col items-stretch h-full justify-center'>
+            <h2 className='READING capitalize'>Roadmap</h2>
             <h3>Issues</h3>
             <ol>
               <li>Shelves page search / error handing</li>
@@ -19,8 +19,8 @@ const Roadmap = () => {
             </ol>
             <h3>Up next</h3>
             <ol>
-              <li>Add to collection from search</li>
-              <li>Goodreads, OL, Storygraph links</li>
+              <li className='line-through'>Add to collection from search</li>
+              <li className='line-through'>Goodreads, OL, Storygraph links</li>
               <li>Trove library lookup API connection</li>
               <li>Author pages</li>
               <li>Create book lists</li>
@@ -36,7 +36,7 @@ const Roadmap = () => {
         <Footer />
       </main>
     </div>
-  );
+  )
 };
 
 export default Roadmap;

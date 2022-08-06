@@ -26,14 +26,16 @@ h1 {
   margin: 0;
   font-size: 5rem;
   color: black;
+  word-wrap: break-word;
 }
 
 h2 {
   font-family: Arial;
   font-family: "Press Start 2P", cursive;
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.8rem;
   text-overflow: "...";
+  word-wrap: break-word;
 }
 
 h3 {
@@ -41,13 +43,15 @@ h3 {
   font-family: "Press Start 2P", cursive;
   margin: 0;
   font-size: 1.5rem;
+  word-wrap: break-word;
 }
 h4 {
   font-family: Arial;
   font-family: "Press Start 2P", cursive;
   margin: 0;
+  font-size: 1rem;
   line-height: 1.5rem;
-  font-size: 0.8rem;
+  word-wrap: break-word;
 }
 
 h5 {
@@ -55,7 +59,8 @@ h5 {
   font-family: "Press Start 2P", cursive;
   margin: 0;
   line-height: 1.5rem;
-  font-size: 0.6rem;
+  font-size: 0.8rem;
+  word-wrap: break-word;
 }
 
 a {
@@ -88,16 +93,21 @@ input, select {
 
 .READ {
   background-color: #F87171;
+  border: solid 3px #F87171;
 }
 
 .READING {
   background-color: #FB923C;
+  border: solid 3px #FB923C;
 }
 
 .TBR {
   background-color: #FACC15;
+  border: solid 3px #FACC15;
 }
 
-.DNF {
+.DNF, .COLLECTION {
   background-color: #A78BFA;
+  border: solid 3px #A78BFA;
 }
+

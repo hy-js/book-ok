@@ -69,3 +69,20 @@ export interface Identifiers {
   goodreads: string[];
   librarything: string[];
 }
+
+export interface CollectionBook {
+  id: number
+  ISBN: string
+  OLkey: string
+  status: string
+  title: string
+  author: string
+  cover: number | null
+  pages: number | null
+  publishedYear: number
+  owned: boolean
+  want: boolean
+  favourite: boolean
+  createdAt: Date
+  updatedAt: Date
+}

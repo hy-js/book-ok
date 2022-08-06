@@ -7,7 +7,7 @@ const Import = () => {
   return (
     <div className='flex flex-col h-screen justify-between'>
       <main className='mb-auto h-1'>
-        <div className='min-w-[80%] w-auto  max-w-min mx-auto space-y-6 '>
+        <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
           <Header />
           <div className='flex flex-col items-stretch h-full'>
             <h2 className='DNF capitalize'>import</h2>
