@@ -8,7 +8,6 @@ const Roadmap = () => {
     <div className='flex flex-col h-screen justify-between'>
       <main className='mb-auto h-10'>
         <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
-          <Header />
           <div className='flex flex-col items-stretch h-full justify-center'>
             <h2 className='READING capitalize'>Roadmap</h2>
             <h3>Issues</h3>

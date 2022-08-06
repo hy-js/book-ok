@@ -1,3 +1,4 @@
+import { motion } from "framer-motion"
 // Next/React
 import Image from "next/image"
 import Link from "next/link"
@@ -9,7 +10,7 @@ const BookCover = ({ book }: CollectionBook) => {
     <Link href={`/details/${book.id}`} key={book.id}>
       <li className='p-2 '>
         {book.cover ? (
-          <>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             {/* <h5>{book.updatedAt.slice(0, 10)}</h5> */}
             <div className={book.status} />
             <Image
@@ -18,11 +19,11 @@ const BookCover = ({ book }: CollectionBook) => {
               width={180}
               height={274}
               src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-              className='border-gray-500 border-solid border-2 cursor-pointer'
+              className='border-gray-500 border-solid border-2 cursor-pointer '
             />
-          </>
+          </motion.div>
         ) : (
-          <>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             {/* {showStats && (
               <>
                 <h5>{book.updatedAt.slice(0, 10)}</h5>
@@ -34,7 +35,7 @@ const BookCover = ({ book }: CollectionBook) => {
               <h4>{book.title}</h4>
               <h5>{book.author}</h5>
             </div>
-          </>
+          </motion.div>
         )}
       </li>
     </Link>

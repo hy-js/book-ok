@@ -31,7 +31,6 @@ const Search = ({ myBooks }: Books) => {
   return (
     <main className='mb-auto h-1'>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6'>
-        <Header />
         <div className='flex flex-col items-stretch h-full'>
           <Searchbar myBooks={myBooks} />
         </div>

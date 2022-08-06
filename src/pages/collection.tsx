@@ -3,6 +3,8 @@ import { GetServerSideProps } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { motion, Variants } from "framer-motion"
+
 // Prisma
 import { prisma } from "@/lib/primsa"
 // Components
@@ -14,6 +16,21 @@ import DeleteButton from "@/components/DeleteButton"
 import UpdateButton from "@/components/UpdateButton"
 // Types
 import { CollectionBook } from "../lib/types"
+
+const cardVariants: Variants = {
+  offscreen: {
+    y: 300
+  },
+  onscreen: {
+    y: 50,
+    rotate: -10,
+    transition: {
+      type: "spring",
+      bounce: 0.4,
+      duration: 0.8
+    }
+  }
+}
 
 const Collection = ({ books }: CollectionBook[]) => {
   const [view, setView] = useState(true)
@@ -52,7 +69,6 @@ const Collection = ({ books }: CollectionBook[]) => {
   return (
     <main className='mb-auto h-1'>
       <div className='min-w-[75%] w-auto max-w-min mx-auto space-y-6 '>
-        <Header />
         <div className='flex flex-col items-stretch h-full'>
           <div className='mb-6 flex flex-col'>
             <button

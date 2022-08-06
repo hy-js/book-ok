@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { prisma } from "../lib/primsa";
+import { motion } from "framer-motion"
 
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../components/Header"
+import Footer from "../components/Footer"
 import BookCover from "@/components/BookCover"
 
 import { CollectionBook } from "../lib/types"
@@ -28,13 +29,22 @@ const Home = ({
   max,
   min
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const config = {
+    type: "spring",
+    damping: 20,
+    stiffness: 100
+  }
   return (
     <main className='mb-auto h-1'>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
-        <Header />
-        <h2 className='capitalize bg-red-200 text-center'>
+        <motion.h2
+          className='capitalize bg-red-200 text-center'
+          transition={config}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ x: 0, opacity: 0 }}>
           {profile.username}
-        </h2>
+        </motion.h2>
         <div className='flex flex-col items-stretch h-full'>
           <>
             <h2 className='bg-gray-200 capitalise '>Stats</h2>

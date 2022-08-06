@@ -14,6 +14,29 @@ import DeleteButton from "@/components/DeleteButton"
 // Types
 import { CollectionBook } from "@/lib/types"
 
+import { motion, Variants } from "framer-motion"
+
+// const cardVariants: Variants = {
+//   twice: {
+//     top: 20,
+//     rotate: -3,
+//     transition: {
+//       type: "spring",
+//       bounce: 0.3,
+//       duration: 1
+//     }
+//   },
+//   once: {
+//     top: 0,
+//     rotate: 3,
+//     transition: {
+//       type: "spring",
+//       bounce: 0.2,
+//       duration: 0.8
+//     }
+//   }
+// }
+
 interface Context {
   params: { id: string }
   locales: string
@@ -33,28 +56,57 @@ interface FormData {
 
 const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const [form, setForm] = useState<FormData>("")
+  const [imageLoading, setImageLoading] = useState(true)
+  const [pulsing, setPulsing] = useState(true)
+
+  const imageLoaded = () => {
+    setImageLoading(false)
+    setTimeout(() => setPulsing(false), 600)
+  }
   return (
     <>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
-        <Header />
-
         <div className='flex flex-col items-stretch h-full'>
           <div className='flex justify-center border-b border-gray-600 p-2'>
             <div className='flex  flex-wrap'>
               <div className='m-3  '>
                 {book.cover ? (
-                  <>
-                    <div className={book.status}>
-                      <h4>{book.status}</h4>
-                    </div>
-                    <Image
-                      alt={book.title || "details cover"}
-                      src={`https://covers.openlibrary.org/b/id/${book.cover}-L.jpg`}
-                      className='w-[360px] h-[548px] object-cover border-gray-500 border-solid border-2'
-                      width={360}
-                      height={548}
-                    />
-                  </>
+                  <div
+                    className={`${pulsing ? "pulse" : ""} loadable `}
+                    style={{
+                      width: "400px",
+                      height: "600px",
+                      background: "#cccccc3d"
+                    }}>
+                    <motion.div
+                      className='card-container mx-8'
+                      initial='once'
+                      whileInView='twice'
+                      viewport={{ once: true, amount: 0.8 }}>
+                      <motion.div
+                        className='card'
+                        // variants={cardVariants}
+                        initial={{ height: "600px", opacity: 0 }}
+                        // style={{ height: imageLoading ? "6rem" : "auto" }}
+                        animate={{
+                          height: imageLoading ? "600px" : "auto",
+                          opacity: imageLoading ? 0 : 1
+                        }}
+                        transition={{ opacity: { delay: 0.5, duration: 0.4 } }}>
+                        <div className={book.status}>
+                          <h4>{book.status}</h4>
+                        </div>
+                        <Image
+                          onLoad={imageLoaded}
+                          alt={book.title || "details cover"}
+                          src={`https://covers.openlibrary.org/b/id/${book.cover}-L.jpg`}
+                          className='w-[360px] h-[548px] object-cover border-gray-500 border-solid border-2'
+                          width={360}
+                          height={548}
+                        />
+                      </motion.div>
+                    </motion.div>
+                  </div>
                 ) : (
                   <>
                     <div className={book.status}>
@@ -68,7 +120,6 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                     </div>
                   </>
                 )}
-                <h4>Last Updated: {book.updatedAt.slice(0, 10)}</h4>
               </div>
               <div className=''>
                 <div className='border-b border-gray-500 my-4 p-2'>
@@ -111,6 +162,7 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                     </ul>
                   </div>
                 </div>
+                <h4>Last Updated: {book.updatedAt.slice(0, 10)}</h4>
                 <DeleteButton book={book} />
               </div>
             </div>
