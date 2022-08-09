@@ -1,24 +1,24 @@
 // Next/React
 import { InferGetStaticPropsType } from "next"
-
+import { getSession, signIn, signOut } from "next-auth/react"
 // Prisma
 import { prisma } from "@/lib/primsa"
+
 // Components
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
-// Types
 import BookCover from "@/components/BookCover"
 
-const Shelves = ({ books }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const TBR = books.filter((book) => book.status === "TBR")
-  const READ = books.filter((book) => book.status === "READ")
-  const READING = books.filter((book) => book.status === "READING")
-  const DNF = books.filter(
+const Shelves = ({
+  interactions
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const TBR = interactions.filter((book) => book.status === "TBR")
+  const READ = interactions.filter((book) => book.status === "READ")
+  const READING = interactions.filter((book) => book.status === "READING")
+  const DNF = interactions.filter(
     (book) => book.status === "DNF" || book.status === "COLLECTION"
   )
 
   return (
-    <main className='mb-auto h-1'>
+    <main className='mb-auto h-max'>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
         <div className='flex flex-col items-stretch'>
           <>
@@ -27,48 +27,92 @@ const Shelves = ({ books }: InferGetStaticPropsType<typeof getStaticProps>) => {
             </h2>
             <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
               {READING.map((book) => (
-                <BookCover book={book} key={book.id} showStats={false} />
+                <BookCover
+                  interaction={book}
+                  book={book.book}
+                  key={book.id}
+                  showStats={true}
+                />
               ))}
             </ul>
             <h2 className='bg-gray-200 capitalise'>{TBR.length} TBR</h2>
             <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
               {TBR.map((book) => (
-                <BookCover book={book} key={book.id} showStats={false} />
+                <BookCover
+                  interaction={book}
+                  book={book.book}
+                  key={book.id}
+                  showStats={true}
+                />
               ))}
             </ul>
             <h2 className='bg-gray-200 capitalize'>{READ.length} Read</h2>
             <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
               {READ.map((book) => (
-                <BookCover book={book} key={book.id} showStats={false} />
+                <BookCover
+                  interaction={book}
+                  book={book.book}
+                  key={book.id}
+                  showStats={true}
+                />
               ))}
             </ul>
             <h2 className='bg-gray-200 capitalize'>
-              {DNF.length} Unsorted/DNF
+              {DNF.length} Unsorted / DNF
             </h2>
             <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
               {DNF.map((book) => (
-                <BookCover book={book} key={book.id} showStats={false} />
+                <BookCover
+                  interaction={book}
+                  book={book.book}
+                  key={book.id}
+                  showStats={true}
+                />
               ))}
             </ul>
-            <h2 className='capitalize'>{books.length} Total</h2>
+            <h2 className='capitalize'>{interactions.length} Total</h2>
           </>
         </div>
       </div>
-      <Footer />
     </main>
   )
 }
 
 export default Shelves
 
-export const getStaticProps = async () => {
-  const allBooks = await prisma.book.findMany()
-  // Limit to 100 books at a time
-  const books = allBooks.slice(0, 101)
+export const getServerSideProps = async (context) => {
+  const session = await getSession(context)
+
+  if (!session) {
+    return {
+      props: {
+        session: null
+      }
+    }
+  }
+
+  const profile = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      readingGoal: true,
+      image: true
+    }
+  })
+
+  let interactions = await prisma.interaction.findMany({
+    where: { userId: profile.id },
+    include: {
+      book: true
+    }
+  })
 
   return {
     props: {
-      books: JSON.parse(JSON.stringify(books))
+      session,
+      interactions: JSON.parse(JSON.stringify(interactions))
     }
   }
 }

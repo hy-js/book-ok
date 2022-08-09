@@ -32,7 +32,6 @@ const Roadmap = () => {
             </ol>
           </div>
         </div>
-        <Footer />
       </main>
     </div>
   )

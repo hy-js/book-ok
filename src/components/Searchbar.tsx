@@ -41,6 +41,7 @@ const Searchbar = ({ myBooks }: Books) => {
 
     if (debouncedSearch) fetchData()
   }, [debouncedSearch])
+
   return (
     <>
       <h2 className='bg-gray-200  capitalize'>

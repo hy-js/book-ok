@@ -14,6 +14,18 @@ const Footer = () => {
               <nav>
                 <Link
                   href='/'
+                  title='Link to About page'
+                  className='block mb-1 text-white'>
+                  <h3 className='anchor-link'>About</h3>
+                </Link>
+                <Link
+                  href='/profile/'
+                  title='Link to Profile page'
+                  className='block mb-1 text-white'>
+                  <h3 className='anchor-link'>Profile</h3>
+                </Link>
+                <Link
+                  href='/'
                   title='Link to Home page'
                   className='block mb-1 text-white'>
                   <h3 className='anchor-link'>Shelves</h3>
@@ -29,12 +41,6 @@ const Footer = () => {
                   title='Link to Collection page'
                   className='block mb-1 text-white'>
                   <h3 className='anchor-link'>Collection</h3>
-                </Link>
-                <Link
-                  href='/import/'
-                  title='Link to Import page'
-                  className='block mb-1 text-white'>
-                  <h3 className='anchor-link'>Import</h3>
                 </Link>
               </nav>
             </div>

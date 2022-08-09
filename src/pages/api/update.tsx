@@ -1,22 +1,27 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { prisma } from "../../lib/primsa"
+import { getSession } from "next-auth/react"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id, status } = req.body
-  console.log(id, status)
-  try {
-    const book = await prisma.book.update({
-      where: {
-        id: id
-      },
-      data: {
-        status: status
-      }
-    })
-
-    res.status(200).json({ message: "Book Updated", book })
-  } catch (error) {
-    console.log(error)
+  const session = await getSession({ req })
+  console.log(session)
+  if (session) {
+    try {
+      const interaction = await prisma.interaction.update({
+        where: {
+          userId: session.user.id
+        },
+        data: {
+          status: status,
+          userId: session.user.id,
+          bookId: id
+        }
+      })
+      res.status(200).json({ message: "Book Updated", interaction })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 

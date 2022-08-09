@@ -23,7 +23,7 @@ const UpdateButton = ({ book }: CollectionBook) => {
           status
         }
       })
-      await router.push("/")
+      await router.push("/shelves")
       // await refreshData()
     } catch (error) {
       console.log("error")

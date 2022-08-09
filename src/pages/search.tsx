@@ -29,7 +29,7 @@ interface Books {
 
 const Search = ({ myBooks }: Books) => {
   return (
-    <main className='mb-auto h-1'>
+    <main className='mb-auto h-screen'>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6'>
         <div className='flex flex-col items-stretch h-full'>
           <Searchbar myBooks={myBooks} />

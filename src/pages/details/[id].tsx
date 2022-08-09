@@ -1,3 +1,4 @@
+import { getSession } from "next-auth/react"
 // Modules
 import axios from "axios"
 // Next/React
@@ -7,35 +8,12 @@ import Image from "next/image"
 // Prisma
 import { prisma } from "@/lib/primsa"
 // Components
-import Header from "@/components/Header"
-import Footer from "@/components/Footer"
 import UpdateButton from "@/components/UpdateButton"
 import DeleteButton from "@/components/DeleteButton"
 // Types
 import { CollectionBook } from "@/lib/types"
 
 import { motion, Variants } from "framer-motion"
-
-// const cardVariants: Variants = {
-//   twice: {
-//     top: 20,
-//     rotate: -3,
-//     transition: {
-//       type: "spring",
-//       bounce: 0.3,
-//       duration: 1
-//     }
-//   },
-//   once: {
-//     top: 0,
-//     rotate: 3,
-//     transition: {
-//       type: "spring",
-//       bounce: 0.2,
-//       duration: 0.8
-//     }
-//   }
-// }
 
 interface Context {
   params: { id: string }
@@ -55,7 +33,6 @@ interface FormData {
 }
 
 const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [form, setForm] = useState<FormData>("")
   const [imageLoading, setImageLoading] = useState(true)
   const [pulsing, setPulsing] = useState(true)
 
@@ -63,31 +40,24 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
     setImageLoading(false)
     setTimeout(() => setPulsing(false), 600)
   }
+  console.log(book)
   return (
     <>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6 '>
         <div className='flex flex-col items-stretch h-full'>
-          <div className='flex justify-center border-b border-gray-600 p-2'>
-            <div className='flex  flex-wrap'>
-              <div className='m-3  '>
+          <div className='flex justify-center border-b border-gray-600 m-2 p-2'>
+            <div className='flex flex-wrap'>
+              <div>
                 {book.cover ? (
-                  <div
-                    className={`${pulsing ? "pulse" : ""} loadable `}
-                    style={{
-                      width: "400px",
-                      height: "600px",
-                      background: "#cccccc3d"
-                    }}>
+                  <div className={`${pulsing ? "pulse" : ""} loadable `}>
                     <motion.div
                       className='card-container mx-8'
                       initial='once'
                       whileInView='twice'
                       viewport={{ once: true, amount: 0.8 }}>
                       <motion.div
-                        className='card'
-                        // variants={cardVariants}
+                        className='w-[360px] h-[548px]  '
                         initial={{ height: "600px", opacity: 0 }}
-                        // style={{ height: imageLoading ? "6rem" : "auto" }}
                         animate={{
                           height: imageLoading ? "600px" : "auto",
                           opacity: imageLoading ? 0 : 1
@@ -97,10 +67,12 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                           <h4>{book.status}</h4>
                         </div>
                         <Image
+                          layout='fixed'
+                          placeholder='blur'
+                          blurDataURL='data:...'
                           onLoad={imageLoaded}
                           alt={book.title || "details cover"}
                           src={`https://covers.openlibrary.org/b/id/${book.cover}-L.jpg`}
-                          className='w-[360px] h-[548px] object-cover border-gray-500 border-solid border-2'
                           width={360}
                           height={548}
                         />
@@ -109,25 +81,28 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                   </div>
                 ) : (
                   <>
-                    <div className={book.status}>
-                      <h4>{book.status}</h4>
-                    </div>
-                    <div className='w-[360px] h-[548px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
-                      <h2>{book.title}</h2>
-                      <h3>{book.author}</h3>
-                      <h3>{book.publishedYear}</h3>
-                      <h5>(Not actual cover)</h5>
+                    <div className='card-container mx-8'>
+                      <div className={book.status}>
+                        <h4>{book.status}</h4>
+                      </div>
+                      <div className='w-[360px] h-[548px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
+                        <h2>{book.title}</h2>
+                        <h3>{book.author}</h3>
+                        <h5>(Not actual cover)</h5>
+                      </div>
                     </div>
                   </>
                 )}
               </div>
-              <div className=''>
+              <div>
                 <div className='border-b border-gray-500 my-4 p-2'>
-                  <h2>{book.title}</h2>
+                  <h2 className='capitalize w-[360px]'>{book.title}</h2>
                   <h2>{book.author}</h2>
-                  <h3>
-                    {book.publishedYear}, {book.pages} pp.
-                  </h3>
+                  <h4>
+                    {book.ISBN} ISBN {book.ISBN.length}
+                  </h4>
+                  <h4>{book.publishedYear}</h4>
+                  <h4>{book.pages} pp.</h4>
                 </div>
                 <UpdateButton book={book} />
                 <hr />
@@ -257,7 +232,6 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
           </form> */}
         </div>
       </div>
-      <Footer />
     </>
   )
 }
@@ -266,13 +240,18 @@ export const getStaticProps = async (context: Context) => {
   const { id } = context.params
   const book = await prisma.book.findFirst({
     where: {
-      id: Number(id)
+      id: id
     }
   })
+
+  // const res = await axios(`http://localhost:3000/api/interactions`)
+  // const interactions = res.data
+  // console.log(interactions)
 
   return {
     props: {
       book: JSON.parse(JSON.stringify(book))
+      // interactions: JSON.parse(JSON.stringify(interactions))
     }
   }
 }
@@ -282,7 +261,7 @@ export async function getStaticPaths() {
   const books = res.data
 
   const ids = books.map((book: CollectionBook) => book.id)
-  const paths = ids.map((id: number) => ({ params: { id: id.toString() } }))
+  const paths = ids.map((id: string) => ({ params: { id: id } }))
 
   return {
     paths,
