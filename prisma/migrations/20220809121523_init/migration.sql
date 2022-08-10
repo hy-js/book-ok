@@ -1,5 +1,8 @@
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('COLLECTION', 'READING', 'TBR', 'READ', 'DNF');
+CREATE TYPE "Shelf" AS ENUM ('COLLECTION', 'READING', 'TBR', 'READ', 'DNF');
+
+-- CreateEnum
+CREATE TYPE "Status" AS ENUM ('NONE', 'FAV', 'OWNED', 'WANT');
 
 -- CreateTable
 CREATE TABLE "Account" (
@@ -70,7 +73,8 @@ CREATE TABLE "Interaction" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "status" "Status" NOT NULL DEFAULT 'COLLECTION',
+    "shelf" "Shelf" NOT NULL DEFAULT 'COLLECTION',
+    "status" "Status" NOT NULL DEFAULT 'NONE',
     "userId" TEXT NOT NULL,
     "bookId" TEXT,
 

@@ -1,4 +1,3 @@
-// Next/React
 import { getSession } from "next-auth/react"
 import { GetServerSideProps } from "next"
 import Image from "next/image"
@@ -193,4 +192,3 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 }
-

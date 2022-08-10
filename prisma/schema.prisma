@@ -52,7 +52,7 @@ model User {
   readingGoalUpdated DateTime?     @default(now())
   accounts           Account[]
   sessions           Session[]
-  Interaction        Interaction[]
+  interaction        Interaction[]
 }
 
 model VerificationToken {
@@ -74,24 +74,32 @@ model Book {
   publishedYear Int?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  Interaction   Interaction[]
+  interaction   Interaction[]
 }
 
 model Interaction {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  status    Status   @default(COLLECTION)
-  User      User?    @relation(fields: [userId], references: [id])
+  shelf     Shelf    @default(COLLECTION)
+  status    Status   @default(NONE)
+  user      User?    @relation(fields: [userId], references: [id])
   userId    String
   book      Book?    @relation(fields: [bookId], references: [id])
   bookId    String?
 }
 
-enum Status {
+enum Shelf {
   COLLECTION
   READING
   TBR
   READ
   DNF
+}
+
+enum Status {
+  NONE
+  FAV
+  OWNED
+  WANT
 }

@@ -4,7 +4,8 @@ const nextConfig = {
   trailingSlash: false,
   swcMinify: true,
   images: {
-    domains: ["covers.openlibrary.org", "avatars.githubusercontent.com"]
+    domains: ["covers.openlibrary.org", "avatars.githubusercontent.com"],
+    minimumCacheTTL: 6000000
   }
 }
 
