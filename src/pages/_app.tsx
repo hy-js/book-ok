@@ -1,9 +1,15 @@
 import "../styles/globals.css";
-import { motion, AnimatePresence } from "framer-motion"
+import type { AppProps } from "next/app"
+import { SessionProvider } from "next-auth/react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/router"
-import Header from "@/components/Header"
+import { motion, AnimatePresence } from "framer-motion"
 
-function MyApp({ Component, pageProps }) {
+import AuthWrapper from "@/components/AuthWrapper"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
+
+function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
 
   const variants = {
@@ -11,27 +17,42 @@ function MyApp({ Component, pageProps }) {
     enter: { opacity: 1, x: 0, y: 0 },
     exit: { opacity: 0, x: 0, y: -100 }
   }
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: true,
+      },
+    },
+  });
 
   return (
     <>
-      <Header />
-      <AnimatePresence
-        exitBeforeEnter
-        initial={false}
-        onExitComplete={() => window.scrollTo(0, 0)}>
-        <div className='page-transition-wrapper'>
-          <motion.div
-            key={router.pathname}
-            initial='hidden'
-            animate='enter'
-            exit='exit'
-            variants={variants}
-            transition={{ type: "linear" }}
-            id='page-transition-container'>
-            <Component {...pageProps} />;
-          </motion.div>
-        </div>
-      </AnimatePresence>
+
+      <SessionProvider session={pageProps.session}>
+        <AuthWrapper>
+        <QueryClientProvider client={client}>
+          <Header />
+          <AnimatePresence
+            exitBeforeEnter
+            initial={false}
+            onExitComplete={() => window.scrollTo(0, 0)}>
+            <div className='page-transition-wrapper'>
+              <motion.div
+                key={router.pathname}
+                initial='hidden'
+                animate='enter'
+                exit='exit'
+                variants={variants}
+                transition={{ type: "linear" }}
+                id='page-transition-container'>
+                <Component {...pageProps} />;
+              </motion.div>
+            </div>
+          </AnimatePresence>
+          <Footer />
+          </QueryClientProvider>
+        </AuthWrapper>
+      </SessionProvider>
     </>
   )
 }

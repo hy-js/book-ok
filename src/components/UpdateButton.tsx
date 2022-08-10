@@ -16,14 +16,14 @@ const UpdateButton = ({ book }: CollectionBook) => {
     try {
       await axios({
         method: "post",
-        url: "http://localhost:3000/api/update",
+        url: "http://localhost:3000/api/collection/update",
         headers: {},
         data: {
           id,
           status
         }
       })
-      await router.push("/")
+      await router.push("/shelves")
       // await refreshData()
     } catch (error) {
       console.log("error")

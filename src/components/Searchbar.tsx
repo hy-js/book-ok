@@ -41,10 +41,11 @@ const Searchbar = ({ myBooks }: Books) => {
 
     if (debouncedSearch) fetchData()
   }, [debouncedSearch])
+
   return (
     <>
       <h2 className='bg-gray-200  capitalize'>
-        {books.length} Open Library results
+        {books.length} Results
       </h2>
       <input
         autoFocus

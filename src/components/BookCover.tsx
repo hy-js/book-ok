@@ -1,20 +1,21 @@
 import { motion } from "framer-motion"
-// Next/React
+import moment from "moment";
 import Image from "next/image"
 import Link from "next/link"
 // Types
-import { CollectionBook } from "../lib/types"
 
-const BookCover = ({ book }: CollectionBook) => {
+
+const BookCover = ({ interaction, book, time }) => {
+
   return (
     <Link href={`/details/${book.id}`} key={book.id}>
       <li className='p-2 '>
         {book.cover ? (
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            {/* <h5>{book.updatedAt.slice(0, 10)}</h5> */}
-            <div className={book.status} />
+            {time && <h5>{moment(interaction.createdAt).fromNow()}</h5>}
+            <div className={interaction.status} />
             <Image
-              placeholder='empty'
+              layout='fixed'
               alt={book.title || "book cover"}
               width={180}
               height={274}
@@ -24,13 +25,8 @@ const BookCover = ({ book }: CollectionBook) => {
           </motion.div>
         ) : (
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            {/* {showStats && (
-              <>
-                <h5>{book.updatedAt.slice(0, 10)}</h5>
-                <h5 className={book.status}>{book.status}</h5>
-              </>
-            )} */}
-            <div className={book.status} />
+            {time && <h5>{moment(interaction.createdAt).fromNow()}</h5>}
+            <div className={interaction.status} />
             <div className='w-[180px] h-[274px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
               <h4>{book.title}</h4>
               <h5>{book.author}</h5>

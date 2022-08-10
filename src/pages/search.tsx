@@ -29,8 +29,11 @@ interface Books {
 
 const Search = ({ myBooks }: Books) => {
   return (
-    <main className='mb-auto h-1'>
+    <main className='mb-auto h-max'>
       <div className='min-w-[75%] w-auto  max-w-min mx-auto space-y-6'>
+      <h2 className='bg-purple-200 capitalize'>
+              Search Open Libary
+            </h2>
         <div className='flex flex-col items-stretch h-full'>
           <Searchbar myBooks={myBooks} />
         </div>

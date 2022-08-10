@@ -15,37 +15,82 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id                 String        @id @default(cuid())
+  name               String?
+  email              String?       @unique
+  emailVerified      DateTime?
+  image              String?
+  readingGoal        Int?
+  readingGoalUpdated DateTime?     @default(now())
+  accounts           Account[]
+  sessions           Session[]
+  Interaction        Interaction[]
+}
+
 model Book {
-  id     Int     @id @default(autoincrement())
-  ISBN   String  @unique
-  OLkey  String?
-  status String?
-
-  title  String?
-  author String?
-
+  id            String        @id @default(cuid())
+  ISBN          String        @unique
+  OLkey         String?
+  title         String?
+  author        String?
   cover         Int?
   pages         Int?
   publishedYear Int?
-
-  owned     Boolean @default(false)
-  want      Boolean @default(false)
-  favourite Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  Profile   Profile? @relation(fields: [profileId], references: [id])
-  profileId Int?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Interaction   Interaction[]
 }
 
-model Profile {
-  id       Int    @id @default(autoincrement())
-  username String
-
-  readingGoal        Int
-  readingGoalUpdated DateTime? @default(now())
-  books              Book[]
-
+model Interaction {
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status    Status   @default(COLLECTION)
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String
+  book      Book?    @relation(fields: [bookId], references: [id])
+  bookId    String?
+}
+
+enum Status {
+  COLLECTION
+  READING
+  TBR
+  READ
+  DNF
 }

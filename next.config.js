@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['covers.openlibrary.org'],
+    domains: ['covers.openlibrary.org', "avatars.githubusercontent.com"],
   },
 }
 

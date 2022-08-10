@@ -12,10 +12,10 @@ const DeleteButton = ({ book }: CollectionBook) => {
     try {
       await axios({
         method: "post",
-        url: "http://localhost:3000/api/delete",
+        url: `/api/collection/delete/`,
         headers: {},
         data: {
-          id
+          id,
         }
       })
       await router.push("/collection")
@@ -28,7 +28,7 @@ const DeleteButton = ({ book }: CollectionBook) => {
     <button
       onClick={() => deleteBook(book.id)}
       className='bg-red-500 px-3 text-white rounded'>
-      <h5>Delete Book</h5>
+      <h5>Delete All History</h5>
     </button>
   )
 }

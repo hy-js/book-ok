@@ -3,7 +3,7 @@ import axios from "axios"
 // Next/React
 import { useRouter } from "next/router"
 // Types
-import { CollectionBook } from "../lib/types"
+import { CollectionBook } from "@/lib/types"
 
 const AddButton = ({ book }: CollectionBook) => {
   const router = useRouter()
@@ -15,7 +15,7 @@ const AddButton = ({ book }: CollectionBook) => {
     try {
       await axios({
         method: "post",
-        url: "http://localhost:3000/api/create",
+        url: "http://localhost:3000/api/collection/create",
         headers: {},
         data: {
           key

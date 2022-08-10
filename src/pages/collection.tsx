@@ -1,45 +1,26 @@
 // Next/React
+import { getSession } from "next-auth/react"
 import { GetServerSideProps } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { motion, Variants } from "framer-motion"
 
 // Prisma
 import { prisma } from "@/lib/primsa"
 // Components
 import SearchbarShelves from "@/components/SearchbarShelves"
-import Footer from "@/components/Footer"
-import Header from "@/components/Header"
 import BookCover from "@/components/BookCover"
-import DeleteButton from "@/components/DeleteButton"
-import UpdateButton from "@/components/UpdateButton"
+
 // Types
 import { CollectionBook } from "../lib/types"
 
-const cardVariants: Variants = {
-  offscreen: {
-    y: 300
-  },
-  onscreen: {
-    y: 50,
-    rotate: -10,
-    transition: {
-      type: "spring",
-      bounce: 0.4,
-      duration: 0.8
-    }
-  }
-}
-
 const Collection = ({ books }: CollectionBook[]) => {
-  const [view, setView] = useState(true)
+  const [view, setView] = useState(false)
   // searching
   const [searchTerm, setSearchTerm] = useState("")
   // sorting
   const [data, setData] = useState([])
   const [sortType, setSortType] = useState("createdAt")
-
   useEffect(() => {
     const sortArray = (type: string) => {
       const types = {
@@ -67,8 +48,11 @@ const Collection = ({ books }: CollectionBook[]) => {
   }, [sortType])
 
   return (
-    <main className='mb-auto h-1'>
+    <main className='mb-auto h-max'>
       <div className='min-w-[75%] w-auto max-w-min mx-auto space-y-6 '>
+            <h2 className='bg-gray-200 bg-orange-200 capitalize'>
+              Community Collection
+            </h2>
         <div className='flex flex-col items-stretch h-full'>
           <div className='mb-6 flex flex-col'>
             <button
@@ -158,7 +142,7 @@ const Collection = ({ books }: CollectionBook[]) => {
               </div>
               <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
                 {data.map((book) => (
-                  <BookCover book={book} key={book.id} />
+                  <BookCover interaction={book} book={book} key={book.id} />
                 ))}
               </ul>
               <h2 className='capitalize'>{data.length} Total</h2>
@@ -166,23 +150,44 @@ const Collection = ({ books }: CollectionBook[]) => {
           )}
         </div>
       </div>
-      <Footer />
     </main>
   )
 }
 
 export default Collection
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context)
+
   const books = await prisma.book.findMany({
     orderBy: {
       createdAt: "desc"
     }
   })
 
+  if (!session) {
+    return {
+      props: {
+        session: null,
+        books: JSON.parse(JSON.stringify(books))
+      }
+    }
+  }
+
+  let interactions = await prisma.interaction.findMany({
+    where: { userId: session.user.id },
+    select: {
+      userId: true,
+      status: true,
+      book: true
+    }
+  })
+
   return {
     props: {
-      books: JSON.parse(JSON.stringify(books))
+      session,
+      books: JSON.parse(JSON.stringify(books)),
+      interactions: JSON.parse(JSON.stringify(interactions))
     }
   }
 }
