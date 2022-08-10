@@ -42,14 +42,6 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
 model User {
   id                 String        @id @default(cuid())
   name               String?
@@ -61,6 +53,14 @@ model User {
   accounts           Account[]
   sessions           Session[]
   Interaction        Interaction[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }
 
 model Book {
@@ -80,6 +80,7 @@ model Book {
 model Interaction {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   status    Status   @default(COLLECTION)
   User      User?    @relation(fields: [userId], references: [id])
   userId    String

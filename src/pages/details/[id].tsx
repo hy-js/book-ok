@@ -86,7 +86,9 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                           opacity: imageLoading ? 0 : 1
                         }}
                         transition={{ opacity: { delay: 0.5, duration: 0.4 } }}>
-                         <div className={interactions[0].status} />
+               {interactions.length > 0 &&
+                        <div className={interactions?.[0].status} />
+                      }
                         <Image
                           layout='fixed'
                           placeholder='blur'
@@ -103,7 +105,9 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                 ) : (
                   <>
                     <div className='card-container mx-8'>
-                    <div className={interactions[0].status} />
+                      {interactions.length > 0 &&
+                        <div className={interactions?.[0].status} />
+                      }
                       <div className='w-[360px] h-[548px] border-gray-500 border-solid border-2 p-2 bg-slate-400'>
                         <h2>{book.title}</h2>
                         <h3>{book.author}</h3>
@@ -156,13 +160,17 @@ const Details = ({ book }: InferGetStaticPropsType<typeof getStaticProps>) => {
                     </ul>
                   </div>
                 </div>
+                {interactions.length > 0 &&
+                        <>
                 <h4>Your History</h4>
                 {interactions.map((interaction) => (
-                <div key={interaction.id} className="my-2">
+                  <div key={interaction.id} className="my-2">
                   <h5 className={interaction.status}>{interaction.status} {moment(interaction.createdAt).format('DD-MM-YYYY')}</h5>
-                </div>
-              ))}
+                  </div>
+                  ))}
                 <DeleteButton book={book} />
+                </>
+                }
               </div>
             </div>
           </div>

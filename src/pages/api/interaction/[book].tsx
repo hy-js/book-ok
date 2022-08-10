@@ -11,6 +11,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         where: {
           bookId: id,
           userId: session.user.id,
+        },
+        orderBy: {
+          createdAt: "desc",
         }
       })
       res.status(200).json(interactions)
