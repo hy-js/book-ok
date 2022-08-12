@@ -52,7 +52,7 @@ const Collection = ({ books, interactions, profiles }) => {
     <main className='mb-auto h-max'>
       <div className='min-w-[80%] w-auto max-w-min mx-auto space-y-6 '>
         <h2 className='bg-gray-200 bg-orange-200 capitalize'>
-          Community Collection
+          Community
         </h2>
         <h2 className='bg-gray-200 capitalise'>Users</h2>
         <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
@@ -68,11 +68,12 @@ const Collection = ({ books, interactions, profiles }) => {
                   height={100}
                 />
               </Link>
-              <ul>
-                {interactions.slice(0, 2).map(
+              <ul className="flex flex-col justify-center">
+                {interactions.slice(0, 1).map(
                   (interaction) =>
                     interaction.userId === profile.id && (
                       <>
+                        <li className="text-xl bold capitalize">{interaction.book.title}</li>
                         <li className={interaction.status}>
                           {interaction.status}
                         </li>
@@ -84,15 +85,14 @@ const Collection = ({ books, interactions, profiles }) => {
             </>
           ))}
         </ul>
-        <h2 className='bg-gray-200 capitalise'>Recent Activity</h2>
         <div className='flex flex-col items-stretch h-full'>
+        <h2 className='bg-gray-200 capitalise'>Sort Entire Collection</h2>
           <div className='mb-6 flex flex-col'>
             <button
               className='bg-slate-800 text-white rounded p-1'
               onClick={() => setView(!view)}>
               <h5>Change View</h5>
             </button>
-            <h2 className='bg-gray-200  capitalize'>Sort Collection</h2>
 
             <select onChange={(e) => setSortType(e.target.value)}>
               <option value='createdAt'>Added</option>
@@ -207,11 +207,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   let profiles = await prisma.user.findMany({
-    // where: {
-    //   NOT: {
-    //     id: session.user.id
-    //   }
-    // }
+    where: {
+      NOT: {
+        id: session.user.id
+      }
+    }
   });
   console.log(profiles);
   let interactions = await prisma.interaction.findMany({
@@ -219,6 +219,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       userId: true,
       status: true,
       book: true
+    },
+    where: {
+      status: {
+        not: "COLLECTION",
+      },
+    },
+    orderBy: {
+      createdAt: 'desc'
     }
   });
 

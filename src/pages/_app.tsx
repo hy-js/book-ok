@@ -1,10 +1,9 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app"
 import { SessionProvider } from "next-auth/react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/router"
 import { motion, AnimatePresence } from "framer-motion"
-
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AuthWrapper from "@/components/AuthWrapper"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"

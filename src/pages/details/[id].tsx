@@ -192,11 +192,10 @@ export const getStaticProps = async (context: Context) => {
   return {
     props: {
       book: JSON.parse(JSON.stringify(book))
-      // interactions: JSON.parse(JSON.stringify(interactions))
+
     }
   };
 };
-
 export async function getStaticPaths() {
   const res = await axios(`http://localhost:3000/api/books`);
   const books = res.data;
@@ -209,31 +208,4 @@ export async function getStaticPaths() {
     fallback: false
   };
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default Details

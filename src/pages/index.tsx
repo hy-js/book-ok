@@ -1,12 +1,26 @@
-import Head from 'next/head';
-import { getSession } from 'next-auth/react';
-import { useState } from 'react';
-import { prisma } from '../lib/primsa';
-
-import LoginButton from '../components/LoginButton';
+import Head from "next/head"
+import { getSession } from "next-auth/react"
+import { useState } from "react"
+import { prisma } from "@/lib/primsa"
+import Image from "next/image"
+import LoginButton from "@/components/LoginButton"
+import axios from "axios"
 
 export default function Home({ session, profile }) {
-  const [editing, setEditing] = useState(false);
+  const [name, setName] = useState("")
+  const [goal, setGoal] = useState("")
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    await axios.post("/api/profile/update", {
+      name,
+      goal
+    })
+  }
+
+  console.log(name)
+  console.log(goal)
+
   return (
     <div className=''>
       <Head>
@@ -31,41 +45,76 @@ export default function Home({ session, profile }) {
                 <h3>Collect - organise your colelction</h3>
               </li>
             </ul>
-            <h2 className='bg-gray-200 capitalise '>Account</h2>
-            <ul className='flex flex-col flex-wrap border-b border-gray-600 p-2 '>
-              <li>{profile.name}</li>
-              <li>{profile.readingGoal}</li>
-              <li className='p-2'>
-                <LoginButton />
-              </li>
-            </ul>
+            <div className='bg-gray-200 '>
+              <h2 className='capitalise '>Account</h2>
+              <hr />
+              <LoginButton />
+            </div>
+            <div className='flex flex-col flex-wrap border-b border-gray-600 p-2 '>
+              {profile && (
+                <div className='flex flex-col justify-center bg-gray-100'>
+                  <div>
+                    <Image
+                      alt={profile.name}
+                      src={profile.image}
+                      className=' rounded-full'
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                  <form onSubmit={handleSubmit}>
+                    <h4>Name</h4>
+                    <input
+                      type='text'
+                      name="name"
+                      aria-label='Name'
+                      placeholder={profile.name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <h4>Reading Goal</h4>
+                    <input
+                      type='text'
+                      name="goal"
+                      placeholder={profile.readingGoal || "0"}
+                      onChange={(e) => setGoal(e.target.value)}
+                    />
+                    <div>
+                      <button
+                        className='bg-blue-500 mr-3 px-3 my-3 text-white rounded'
+                        type='submit'>
+                        <h5>Edit Profile</h5>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
     </div>
-  );
+  )
 }
 
 export const getServerSideProps = async (context) => {
-  const session = await getSession(context);
+  const session = await getSession(context)
 
   if (!session) {
     return {
       props: {
         session: null
       }
-    };
+    }
   }
 
   const profile = await prisma.user.findUnique({
     where: { id: session.user.id }
-  });
+  })
 
   return {
     props: {
       session,
       profile: JSON.parse(JSON.stringify(profile))
     }
-  };
-};
-
+  }
+}

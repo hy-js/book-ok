@@ -4,21 +4,18 @@ import { getSession } from "next-auth/react"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await getSession({ req })
-  const { id } = req.query
+  const {name, goal} = req.body
+
   if (session) {
     try {
-      const interactions = await prisma.interaction.findMany({
-        where: {
-          bookId: id?.toString(),
-          status: {
-            not: "COLLECTION",
-          }
-        },
-        orderBy: {
-          createdAt: "desc",
-        }
-      })
-      res.status(200).json(interactions)
+      const updateUser = await prisma.user.update({
+         where: { id: session.user.id },
+         data: {
+           name,
+           readingGoal: Number(goal)
+         }
+       })
+      res.status(200).json(updateUser)
     } catch (error) {
       console.log(error)
     }

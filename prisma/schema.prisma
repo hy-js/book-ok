@@ -80,7 +80,6 @@ model Book {
 model Interaction {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
   status    Status   @default(COLLECTION)
   property  Property @default(NIL)
   User      User?    @relation(fields: [userId], references: [id])

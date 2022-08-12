@@ -38,7 +38,7 @@ const CollectionSort = (props: { books: OLBOOK[] }) => {
   }, [sortType])
   return (
     <>
-      <h2 className='bg-gray-200  capitalize'>Sort Collection</h2>
+      <h2 className='bg-gray-200  capitalize'>Sort Entire Collection</h2>
 
       <select onChange={(e) => setSortType(e.target.value)}>
         <option value='createdAt'>Added</option>

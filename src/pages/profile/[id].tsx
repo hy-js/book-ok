@@ -38,8 +38,6 @@ export default function Home({ profile, interactions }) {
         </motion.div>
         <div className='flex flex-col items-stretch h-full'>
           <>
-            <h2 className='bg-gray-200 capitalise '>Stats</h2>
-            <ul className='flex flex-col flex-wrap border-b border-gray-600 p-2 '></ul>
             <h2 className='bg-gray-200 capitalise'>Activity</h2>
             <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
               {interactions.map((book) => (
@@ -86,6 +84,9 @@ export const getServerSideProps = async (context) => {
 
   let interactions = await prisma.interaction.findMany({
     where: {
+        NOT: {
+          status: "COLLECTION"
+        },
       userId: id
     },
     include: {

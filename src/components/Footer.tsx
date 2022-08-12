@@ -14,9 +14,9 @@ const Footer = () => {
               <nav>
                 <Link
                   href='/'
-                  title='Link to About page'
+                  title='Link to Account page'
                   className='block mb-1 text-white'>
-                  <h3 className='anchor-link'>About</h3>
+                  <h3 className='anchor-link'>Account</h3>
                 </Link>
                 <Link
                   href='/profile/'
