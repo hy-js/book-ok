@@ -1,4 +1,4 @@
-import { getSession, signIn, signOut } from "next-auth/react"
+import { getSession } from 'next-auth/react';
 
 import Image from 'next/image';
 import { prisma } from '@/lib/primsa';
@@ -60,6 +60,7 @@ export default function Home({ profile, interactions }) {
 }
 
 export const getServerSideProps = async (context) => {
+  const { id } = context.params;
   const session = await getSession(context);
 
   if (!session) {
@@ -71,7 +72,9 @@ export const getServerSideProps = async (context) => {
   }
 
   const profile = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: {
+      id: id
+    },
     select: {
       id: true,
       name: true,
@@ -82,7 +85,9 @@ export const getServerSideProps = async (context) => {
   });
 
   let interactions = await prisma.interaction.findMany({
-    where: { userId: profile.id },
+    where: {
+      userId: id
+    },
     include: {
       book: true
     },
@@ -98,5 +103,5 @@ export const getServerSideProps = async (context) => {
       interactions: JSON.parse(JSON.stringify(interactions))
     }
   };
-
 };
+

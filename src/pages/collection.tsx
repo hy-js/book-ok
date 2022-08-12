@@ -4,55 +4,87 @@ import { GetServerSideProps } from "next"
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import moment from 'moment';
 
 // Prisma
-import { prisma } from "@/lib/primsa"
+import { prisma } from '@/lib/primsa';
 // Components
-import SearchbarShelves from "@/components/SearchbarShelves"
-import BookCover from "@/components/BookCover"
+import SearchbarShelves from '@/components/SearchbarShelves';
+import BookCover from '@/components/BookCover';
 
 // Types
-import { CollectionBook } from "../lib/types"
+import { CollectionBook } from '@/lib/types';
 
-const Collection = ({ books }: CollectionBook[]) => {
-  const [view, setView] = useState(false)
+const Collection = ({ books, interactions, profiles }) => {
+  const [view, setView] = useState(false);
   // searching
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState('');
   // sorting
-  const [data, setData] = useState([])
-  const [sortType, setSortType] = useState("createdAt")
+  const [data, setData] = useState([]);
+  const [sortType, setSortType] = useState('createdAt');
   useEffect(() => {
     const sortArray = (type: string) => {
       const types = {
-        createdAt: "createdAt",
-        pages: "pages",
-        title: "title",
-        author: "author"
-      }
-      const sortProperty = types[type]
-      console.log(sortProperty)
-      if (sortProperty === "pages" || sortProperty === "createdAt") {
+        createdAt: 'createdAt',
+        pages: 'pages',
+        title: 'title',
+        author: 'author'
+      };
+      const sortProperty = types[type];
+      console.log(sortProperty);
+      if (sortProperty === 'pages' || sortProperty === 'createdAt') {
         const sorted: CollectionBook[] = [...books].sort(
           (a, b) => a[sortProperty] - b[sortProperty]
-        )
-        setData(sorted)
+        );
+        setData(sorted);
       } else {
         const sorted: CollectionBook[] = [...books].sort((a, b) =>
           a[sortProperty].localeCompare(b[sortProperty])
-        )
-        setData(sorted)
+        );
+        setData(sorted);
       }
-    }
+    };
 
-    sortArray(sortType)
-  }, [sortType])
+    sortArray(sortType);
+  }, [sortType]);
 
   return (
     <main className='mb-auto h-max'>
-      <div className='min-w-[75%] w-auto max-w-min mx-auto space-y-6 '>
-            <h2 className='bg-gray-200 bg-orange-200 capitalize'>
-              Community Collection
-            </h2>
+      <div className='min-w-[80%] w-auto max-w-min mx-auto space-y-6 '>
+        <h2 className='bg-gray-200 bg-orange-200 capitalize'>
+          Community Collection
+        </h2>
+        <h2 className='bg-gray-200 capitalise'>Users</h2>
+        <ul className='flex  flex-wrap border-b border-gray-600 p-2 '>
+          {profiles.map((profile) => (
+            <>
+              <Link href={`/profile/${profile.id}`} key={profile.id}>
+                <Image
+                  key={profile.id}
+                  alt={profile.name}
+                  src={profile.image}
+                  className=' rounded-full cursor-pointer mx-2'
+                  width={100}
+                  height={100}
+                />
+              </Link>
+              <ul>
+                {interactions.slice(0, 2).map(
+                  (interaction) =>
+                    interaction.userId === profile.id && (
+                      <>
+                        <li className={interaction.status}>
+                          {interaction.status}
+                        </li>
+                        <li>{moment(interaction.createdAt).fromNow()}</li>
+                      </>
+                    )
+                )}
+              </ul>
+            </>
+          ))}
+        </ul>
+        <h2 className='bg-gray-200 capitalise'>Recent Activity</h2>
         <div className='flex flex-col items-stretch h-full'>
           <div className='mb-6 flex flex-col'>
             <button
@@ -83,8 +115,8 @@ const Collection = ({ books }: CollectionBook[]) => {
               <ul className='flex flex-col'>
                 {data
                   .filter((val: CollectionBook) => {
-                    if (searchTerm === "") {
-                      return val
+                    if (searchTerm === '') {
+                      return val;
                     } else if (
                       val.title
                         .toLowerCase()
@@ -93,7 +125,7 @@ const Collection = ({ books }: CollectionBook[]) => {
                         .toLowerCase()
                         .includes(searchTerm.toLowerCase())
                     ) {
-                      return val
+                      return val;
                     }
                   })
                   .map((book: CollectionBook) => (
@@ -104,7 +136,7 @@ const Collection = ({ books }: CollectionBook[]) => {
                             {book.cover ? (
                               <>
                                 <Image
-                                  alt={book.title || "book cover"}
+                                  alt={book.title || 'book cover'}
                                   src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
                                   className='w-[180px] h-[274px] object-cover border-gray-500 border-solid border-2'
                                   width={180}
@@ -136,10 +168,10 @@ const Collection = ({ books }: CollectionBook[]) => {
             </>
           ) : (
             <>
-              <div className='mb-4 flex flex-col'>
+              {/* <div className='mb-4 flex flex-col'>
                 <h2 className='bg-gray-200  capitalize'>Add to collection</h2>
                 <SearchbarShelves />
-              </div>
+              </div> */}
               <ul className='flex  flex-wrap border-b border-gray-600 p-2'>
                 {data.map((book) => (
                   <BookCover interaction={book} book={book} key={book.id} />
@@ -151,19 +183,19 @@ const Collection = ({ books }: CollectionBook[]) => {
         </div>
       </div>
     </main>
-  )
-}
+  );
+};
 
-export default Collection
+export default Collection;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getSession(context)
+  const session = await getSession(context);
 
   const books = await prisma.book.findMany({
     orderBy: {
-      createdAt: "desc"
+      createdAt: 'desc'
     }
-  })
+  });
 
   if (!session) {
     return {
@@ -171,23 +203,69 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         session: null,
         books: JSON.parse(JSON.stringify(books))
       }
-    }
+    };
   }
 
+  let profiles = await prisma.user.findMany({
+    // where: {
+    //   NOT: {
+    //     id: session.user.id
+    //   }
+    // }
+  });
+  console.log(profiles);
   let interactions = await prisma.interaction.findMany({
-    where: { userId: session.user.id },
     select: {
       userId: true,
       status: true,
       book: true
     }
-  })
+  });
 
   return {
     props: {
       session,
       books: JSON.parse(JSON.stringify(books)),
-      interactions: JSON.parse(JSON.stringify(interactions))
+      interactions: JSON.parse(JSON.stringify(interactions)),
+      profiles: JSON.parse(JSON.stringify(profiles))
     }
-  }
-}
+  };
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
